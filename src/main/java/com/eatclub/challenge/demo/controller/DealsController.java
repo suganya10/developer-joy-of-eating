@@ -1,0 +1,36 @@
+package com.eatclub.challenge.demo.controller;
+
+import com.eatclub.challenge.demo.dto.DealResponseDTO;
+import com.eatclub.challenge.demo.service.DealsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api")
+public class DealsController {
+
+    private static final Logger log = LoggerFactory.getLogger(DealsController.class);
+    private final DealsService dealsService;
+
+    public DealsController(DealsService dealsService) {
+        this.dealsService = dealsService;
+    }
+
+    @GetMapping("/deals")
+    public ResponseEntity<Map<String, List<List<DealResponseDTO>>>> getDealsByTime(@RequestParam String timeOfDay) {
+        try {
+            List<List<DealResponseDTO>> groupedDeals = dealsService.getDealsByTime(timeOfDay);
+            return ResponseEntity.ok(Map.of("deals", groupedDeals));
+        } catch (IOException e) {
+            log.error("Failed to retrieve deals: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+}
