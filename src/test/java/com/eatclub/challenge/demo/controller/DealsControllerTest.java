@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -59,6 +60,17 @@ class DealsControllerTest {
         assertEquals(1, result.size());
         assertEquals("3:00pm", result.get(0).get(0).getRestaurantOpen());
         assertEquals("3:00pm", result.get(0).get(1).getRestaurantOpen());
+    }
+
+    @Test
+    void testPeakTime_fromJsonFile() throws Exception {
+        when(restaurantService.getAllRestaurants()).thenReturn(mockRestaurants);
+
+        Map<String, String> result = dealsService.getDealsPeakTime();
+
+        assertEquals(2, result.size());
+        assertEquals("4:00pm", result.get("peakTimeStart"));
+        assertEquals("11:00pm", result.get("peakTimeEnd"));
     }
 
     @Test

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,4 +34,17 @@ public class DealsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/deals/peakTime")
+    public ResponseEntity<Map<String, String>> getPeakTimeDeals() {
+        try {
+            Map<String, String> response = dealsService.getDealsPeakTime();
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            log.error("Failed to retrieve deals: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
 }
