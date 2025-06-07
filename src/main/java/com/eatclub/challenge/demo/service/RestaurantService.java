@@ -4,6 +4,7 @@ import com.eatclub.challenge.demo.model.Restaurant;
 import com.eatclub.challenge.demo.wrapper.RestaurantWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -11,11 +12,15 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
 
 @Service
 public class RestaurantService {
+
+    @Value("${deals.url}")
+    private String dealsUrl;
 
     private static final Logger log = LoggerFactory.getLogger(RestaurantService.class);
     private final RestTemplate restTemplate;
@@ -25,11 +30,9 @@ public class RestaurantService {
     }
 
     public List<Restaurant> getAllRestaurants() {
-        String apiUrl = "https://eccdn.com.au/misc/challengedata.json";
-
         try {
             var responseEntity = restTemplate.exchange(
-                    apiUrl,
+                    dealsUrl,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<RestaurantWrapper>() {}
