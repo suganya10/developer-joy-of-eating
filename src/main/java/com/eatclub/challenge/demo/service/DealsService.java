@@ -2,6 +2,7 @@ package com.eatclub.challenge.demo.service;
 
 import com.eatclub.challenge.demo.dto.DealResponseDTO;
 import com.eatclub.challenge.demo.model.Restaurant;
+import com.eatclub.challenge.demo.utility.MapperUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,11 +10,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static com.eatclub.challenge.demo.utility.MapperUtil.getMappedDeals;
+import java.util.stream.Collectors;
 
 @Service
 public class DealsService {
@@ -36,13 +35,10 @@ public class DealsService {
             throw new IOException("Unable to fetch restaurant data", e);
         }
 
-        List<List<DealResponseDTO>> dealResponses = new ArrayList<>();
-
-        for (Restaurant res : restaurants) {
-            if (timeOfDay.equalsIgnoreCase(res.getOpen())) {
-                dealResponses.add(getMappedDeals(res));
-            }
-        }
+        List<List<DealResponseDTO>> dealResponses = restaurants.stream()
+                .filter(res -> timeOfDay.equalsIgnoreCase(res.getOpen()))
+                .map(MapperUtil::getMappedDeals)
+                .collect(Collectors.toList());
 
         if (dealResponses.isEmpty()) {
             log.warn("No deals found for time: {}", timeOfDay);
