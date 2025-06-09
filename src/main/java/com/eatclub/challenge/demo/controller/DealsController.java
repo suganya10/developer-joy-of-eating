@@ -23,8 +23,8 @@ public class DealsController {
         this.dealsService = dealsService;
     }
 
-    @GetMapping("/deals")
-    public ResponseEntity<Map<String, List<List<DealResponseDTO>>>> getDealsByTime(@RequestParam String timeOfDay) {
+    @GetMapping("/deals/{timeOfDay}")
+    public ResponseEntity<Map<String, List<List<DealResponseDTO>>>> getDealsByTime(@PathVariable String timeOfDay) {
         try {
             List<List<DealResponseDTO>> groupedDeals = dealsService.getDealsByTime(timeOfDay);
             return ResponseEntity.ok(Map.of("deals", groupedDeals));
