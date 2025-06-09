@@ -2,6 +2,7 @@ package com.eatclub.challenge.demo.service;
 
 import com.eatclub.challenge.demo.model.Restaurant;
 import com.eatclub.challenge.demo.wrapper.RestaurantWrapper;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,13 +13,13 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
 
 @Service
 public class RestaurantService {
 
+    @Setter
     @Value("${deals.url}")
     private String dealsUrl;
 

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -73,26 +74,30 @@ class DealsControllerTest {
         assertEquals("11:00pm", result.get("peakTimeEnd"));
     }
 
+
     @Test
     void testGetAllRestaurants_RestClientException() {
         RestaurantService realService = new RestaurantService(restTemplate);
-
+        realService.setDealsUrl("http://test-url.com");
         when(restTemplate.exchange(
-                anyString(),
+                eq("http://test-url.com"),
                 eq(HttpMethod.GET),
                 isNull(),
-                any(ParameterizedTypeReference.class)))
+                any(ParameterizedTypeReference.class )))
                 .thenThrow(new RestClientException("Connection timeout"));
 
         assertThrows(RestClientException.class, realService::getAllRestaurants);
-    }
+
+
+
+        }
 
     @Test
     void testGetAllRestaurants_ServiceUnavailable() {
         RestaurantService realService = new RestaurantService(restTemplate);
-
+        realService.setDealsUrl("http://test-url.com");
         when(restTemplate.exchange(
-                anyString(),
+                eq("http://test-url.com"),
                 eq(HttpMethod.GET),
                 isNull(),
                 any(ParameterizedTypeReference.class)))
@@ -106,9 +111,9 @@ class DealsControllerTest {
     @Test
     void shouldReturnStatusFromHttpStatusCodeException() {
         RestaurantService realService = new RestaurantService(restTemplate);
-
+        realService.setDealsUrl("http://test-url.com");
         when(restTemplate.exchange(
-                anyString(),
+                eq("http://test-url.com"),
                 eq(HttpMethod.GET),
                 isNull(),
                 any(ParameterizedTypeReference.class)))
