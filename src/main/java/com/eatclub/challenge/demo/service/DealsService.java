@@ -2,14 +2,16 @@ package com.eatclub.challenge.demo.service;
 
 import com.eatclub.challenge.demo.dto.DealResponseDTO;
 import com.eatclub.challenge.demo.model.Restaurant;
-import com.eatclub.challenge.demo.utility.MapperUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static com.eatclub.challenge.demo.utility.MapperUtil.getMappedDeals;
 

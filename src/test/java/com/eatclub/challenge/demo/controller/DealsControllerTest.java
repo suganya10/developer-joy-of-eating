@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -59,8 +58,8 @@ class DealsControllerTest {
         List<List<DealResponseDTO>> result = dealsService.getDealsByTime("3:00pm");
 
         assertEquals(1, result.size());
-        assertEquals("3:00pm", result.get(0).get(0).getRestaurantOpen());
-        assertEquals("3:00pm", result.get(0).get(1).getRestaurantOpen());
+        assertEquals("3:00pm", result.getFirst().getFirst().getRestaurantOpen());
+        assertEquals("3:00pm", result.getFirst().get(1).getRestaurantOpen());
     }
 
     @Test
