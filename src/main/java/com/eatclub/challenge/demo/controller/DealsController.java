@@ -23,17 +23,30 @@ public class DealsController {
         this.dealsService = dealsService;
     }
 
+    /**
+     * Retrieves deals available at a specific time of day.
+     *
+     * @param timeOfDay the time of day to filter deals (e.g., "3:00pm")
+     * @return a ResponseEntity containing a map of deal responses
+     */
     @GetMapping("/deals/{timeOfDay}")
-    public ResponseEntity<Map<String, List<List<DealResponseDTO>>>> getDealsByTime(@PathVariable String timeOfDay) {
+    public ResponseEntity<Map<String, List<DealResponseDTO>>> getDealsByTime(@PathVariable String timeOfDay) {
         try {
-            List<List<DealResponseDTO>> groupedDeals = dealsService.getDealsByTime(timeOfDay);
+            List<DealResponseDTO> groupedDeals = dealsService.getDealsByTime(timeOfDay);
+
             return ResponseEntity.ok(Map.of("deals", groupedDeals));
-        } catch (IOException e) {
-            log.error("Failed to retrieve deals: {}", e.getMessage(), e);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
+
+
+    /**
+     * Retrieves the peak time window during which the most deals are available.
+     *
+     * @return a ResponseEntity containing a map with the peak start and end times
+     */
     @GetMapping("/deals/peakTime")
     public ResponseEntity<Map<String, String>> getPeakTimeDeals() {
         try {
