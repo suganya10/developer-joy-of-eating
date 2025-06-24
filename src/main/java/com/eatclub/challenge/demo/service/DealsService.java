@@ -1,6 +1,7 @@
 package com.eatclub.challenge.demo.service;
 
 import com.eatclub.challenge.demo.dto.DealResponseDTO;
+import com.eatclub.challenge.demo.model.Deal;
 import com.eatclub.challenge.demo.model.Restaurant;
 import com.eatclub.challenge.demo.utility.MapperUtil;
 import org.slf4j.Logger;
@@ -8,10 +9,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.eatclub.challenge.demo.utility.MapperUtil.getMappedDeals;
+/*
+
+ */
 
 @Service
 public class DealsService {
@@ -23,7 +29,7 @@ public class DealsService {
         this.restaurantService = restaurantService;
     }
 
-    public List<List<DealResponseDTO>> getDealsByTime(String timeOfDay) throws IOException {
+    public List<DealResponseDTO> getDealsByTime(String timeOfDay) throws IOException {
         log.info("Fetching restaurant data for time: {}", timeOfDay);
 
         List<Restaurant> restaurants;
@@ -34,13 +40,11 @@ public class DealsService {
             throw new IOException("Unable to fetch restaurant data", e);
         }
 
-        List<List<DealResponseDTO>> dealResponses = new ArrayList<>();
-
-        for (Restaurant res : restaurants) {
-            if (timeOfDay.equalsIgnoreCase(res.getOpen())) {
-                dealResponses.add(getMappedDeals(res));
-            }
-        }
+        List<DealResponseDTO> dealResponses = restaurants.stream()
+                .filter(res -> res.getDeals().stream()
+                        .anyMatch(deal -> timeOfDay.equalsIgnoreCase(deal.getStart())))
+                .flatMap(res -> MapperUtil.getMappedDeals(res).stream())
+                .collect(Collectors.toList());
 
         if (dealResponses.isEmpty()) {
             log.warn("No deals found for time: {}", timeOfDay);
@@ -63,15 +67,21 @@ public class DealsService {
         Map<String, Integer> peakEnd = new HashMap<>();
 
         for (Restaurant res : restaurants) {
-            String open = res.getOpen();
-            String close = res.getClose();
 
-            if (open != null && !open.isEmpty()) {
-                peakStart.put(open, peakStart.getOrDefault(open, 0) + 1);
-            }
+            List<Deal> deals = res.getDeals();
+            if (deals != null) {
+                for (Deal deal : deals) {
+                    String start = deal.getStart();
+                    String end = deal.getEnd();
 
-            if (close != null && !close.isEmpty()) {
-                peakEnd.put(close, peakEnd.getOrDefault(close, 0) + 1);
+                    if (start != null && !start.isEmpty()) {
+                        peakStart.put(start, peakStart.getOrDefault(start, 0) + 1);
+                    }
+
+                    if (end != null && !end.isEmpty()) {
+                        peakEnd.put(end, peakEnd.getOrDefault(end, 0) + 1);
+                    }
+                }
             }
         }
 

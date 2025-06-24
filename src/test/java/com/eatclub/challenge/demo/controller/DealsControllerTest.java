@@ -55,11 +55,11 @@ class DealsControllerTest {
     void testGetDeals_fromJsonFile() throws Exception {
         when(restaurantService.getAllRestaurants()).thenReturn(mockRestaurants);
 
-        List<List<DealResponseDTO>> result = dealsService.getDealsByTime("3:00pm");
+        List<DealResponseDTO> result = dealsService.getDealsByTime("2:00pm");
 
-        assertEquals(1, result.size());
-        assertEquals("3:00pm", result.get(0).get(0).getRestaurantOpen());
-        assertEquals("3:00pm", result.get(0).get(1).getRestaurantOpen());
+        assertEquals(2, result.size());
+        assertEquals("Kekou", result.getFirst().getRestaurantName());
+        assertEquals("Kekou", result.get(1).getRestaurantName());
     }
 
     @Test
@@ -69,30 +69,34 @@ class DealsControllerTest {
         Map<String, String> result = dealsService.getDealsPeakTime();
 
         assertEquals(2, result.size());
-        assertEquals("4:00pm", result.get("peakTimeStart"));
-        assertEquals("11:00pm", result.get("peakTimeEnd"));
+        assertEquals("5:00pm", result.get("peakTimeStart"));
+        assertEquals("9:00pm", result.get("peakTimeEnd"));
     }
+
 
     @Test
     void testGetAllRestaurants_RestClientException() {
         RestaurantService realService = new RestaurantService(restTemplate);
-
+        realService.setDealsUrl("http://test-url.com");
         when(restTemplate.exchange(
-                anyString(),
+                eq("http://test-url.com"),
                 eq(HttpMethod.GET),
                 isNull(),
-                any(ParameterizedTypeReference.class)))
+                any(ParameterizedTypeReference.class )))
                 .thenThrow(new RestClientException("Connection timeout"));
 
         assertThrows(RestClientException.class, realService::getAllRestaurants);
-    }
+
+
+
+        }
 
     @Test
     void testGetAllRestaurants_ServiceUnavailable() {
         RestaurantService realService = new RestaurantService(restTemplate);
-
+        realService.setDealsUrl("http://test-url.com");
         when(restTemplate.exchange(
-                anyString(),
+                eq("http://test-url.com"),
                 eq(HttpMethod.GET),
                 isNull(),
                 any(ParameterizedTypeReference.class)))
@@ -106,9 +110,9 @@ class DealsControllerTest {
     @Test
     void shouldReturnStatusFromHttpStatusCodeException() {
         RestaurantService realService = new RestaurantService(restTemplate);
-
+        realService.setDealsUrl("http://test-url.com");
         when(restTemplate.exchange(
-                anyString(),
+                eq("http://test-url.com"),
                 eq(HttpMethod.GET),
                 isNull(),
                 any(ParameterizedTypeReference.class)))
